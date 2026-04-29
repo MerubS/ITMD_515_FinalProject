@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!--
+  HR Directory
+  Author: MerubS
+  employees.xhtml — Employee list with department filter and keyword search (USER + ADMIN)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="pageTitle">Employees</ui:define>
+
+    <ui:define name="content">
+        <h1>Employees</h1>
+
+        <!-- Filter + Search bar -->
+        <h:form id="filterForm">
+            <div class="filter-bar">
+
+                <!-- Department dropdown filter -->
+                <div>
+                    <label>Filter by Department</label>
+                    <h:selectOneMenu value="#{employeeBean.selectedDeptId}"
+                                     style="min-width:180px">
+                        <f:selectItem itemLabel="— All Departments —" itemValue=""/>
+                        <f:selectItems value="#{employeeBean.departments}"
+                                       var="d"
+                                       itemValue="#{d.deptId}"
+                                       itemLabel="#{d.deptName}"/>
+                    </h:selectOneMenu>
+                </div>
+
+                <div>
+                    <label>&#160;</label>
+                    <h:commandButton value="Filter"
+                                     action="#{employeeBean.filterByDepartment}"
+                                     styleClass="btn btn-primary"/>
+                </div>
+
+                <!-- Keyword search -->
+                <div>
+                    <label>Search by Name or Title</label>
+                    <h:inputText value="#{employeeBean.searchKeyword}"
+                                 placeholder="e.g. Engineer"
+                                 style="min-width:200px"/>
+                </div>
+
+                <div>
+                    <label>&#160;</label>
+                    <h:commandButton value="Search"
+                                     action="#{employeeBean.search}"
+                                     styleClass="btn btn-success"/>
+                </div>
+
+                <div>
+                    <label>&#160;</label>
+                    <h:commandButton value="Clear"
+                                     action="#{employeeBean.clearFilters}"
+                                     styleClass="btn btn-secondary"/>
+                </div>
+
+            </div>
+        </h:form>
+
+        <!-- Employee table -->
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Title</th>
+                <th>Department</th>
+                <th>Salary</th>
+                <th>Hire Date</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ui:repeat value="#{employeeBean.employees}" var="emp">
+                <tr>
+                    <td>#{emp.empId}</td>
+                    <td>#{emp.fullName}</td>
+                    <td>#{emp.title}</td>
+                    <td>#{emp.department.deptName}</td>
+                    <td>$#{emp.salary}</td>
+                    <td>#{emp.hireDate}</td>
+                    <td>
+                        <!-- Edit link — only ADMINs can access this page (web.xml) -->
+                        <h:link outcome="/editEmployee" styleClass="btn btn-primary btn-sm"
+                                value="Edit">
+                            <f:param name="empId" value="#{emp.empId}"/>
+                        </h:link>
+                    </td>
+                </tr>
+            </ui:repeat>
+            </tbody>
+        </table>
+
+    </ui:define>
+
+</ui:composition>
+</html>

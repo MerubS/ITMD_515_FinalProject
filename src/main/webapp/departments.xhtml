@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+  HR Directory
+  Author: MerubS
+  departments.xhtml — Department list page (USER + ADMIN)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="pageTitle">Departments</ui:define>
+
+    <ui:define name="content">
+        <h1>Departments</h1>
+
+        <div class="dept-grid">
+            <ui:repeat value="#{departmentBean.departments}" var="dept">
+                <div class="dept-card">
+                    <h3>#{dept.deptName}</h3>
+                    <span>ID: #{dept.deptId}</span>
+                    <!-- Link to employee list filtered by this department -->
+                    <h:link outcome="/employees" styleClass="btn btn-primary btn-sm"
+                            value="View Employees">
+                        <f:param name="deptId" value="#{dept.deptId}"/>
+                    </h:link>
+                </div>
+            </ui:repeat>
+        </div>
+
+    </ui:define>
+
+</ui:composition>
+</html>

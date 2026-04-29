@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HR Directory
+  Author: MerubS
+  web.xml — Faces servlet + Payara container-managed RBAC security
+-->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>HR Directory</display-name>
+
+    <!-- ── Jakarta Faces Servlet ─────────────────────────────────────────── -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+
+    <!-- ── Welcome page ──────────────────────────────────────────────────── -->
+    <welcome-file-list>
+        <welcome-file>departments.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <!-- ── RBAC Security Constraints ─────────────────────────────────────── -->
+
+    <!--
+        1. ADMIN-only: edit page is restricted to ADMIN role only.
+           Any attempt by USER or anonymous to GET/POST editEmployee.xhtml
+           will be blocked (403 Forbidden).
+    -->
+    <security-constraint>
+        <display-name>Admin Edit Only</display-name>
+        <web-resource-collection>
+            <web-resource-name>Edit Employee Page</web-resource-name>
+            <url-pattern>/editEmployee.xhtml</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!--
+        2. USER + ADMIN: list pages are accessible to both roles.
+    -->
+    <security-constraint>
+        <display-name>Authenticated List Pages</display-name>
+        <web-resource-collection>
+            <web-resource-name>Department and Employee Lists</web-resource-name>
+            <url-pattern>/departments.xhtml</url-pattern>
+            <url-pattern>/employees.xhtml</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>USER</role-name>
+            <role-name>ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- ── Login config: BASIC auth (simple for demo/testing) ────────────── -->
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>file</realm-name>
+    </login-config>
+
+    <!-- ── Declare roles ─────────────────────────────────────────────────── -->
+    <security-role>
+        <role-name>USER</role-name>
+    </security-role>
+    <security-role>
+        <role-name>ADMIN</role-name>
+    </security-role>
+
+    <!-- ── JSF development stage (change to Production for prod) ─────────── -->
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+
+</web-app>

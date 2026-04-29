@@ -1,0 +1,14 @@
+<persistence-unit name="hrPU" transaction-type="JTA">
+    <jta-data-source>jdbc/HrDS</jta-data-source>
+
+    <class>io.github.merubs.finalproject.entity.Department</class>
+    <class>io.github.merubs.finalproject.entity.Employee</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+    <properties>
+        <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+        <property name="jakarta.persistence.sql-load-script-source" value="META-INF/import.sql"/>
+        <property name="eclipselink.ddl-generation" value="none"/>
+        <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+    </properties>
+</persistence-unit>

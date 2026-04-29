@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  HR Directory
+  Author: MerubS
+  editEmployee.xhtml — ADMIN-only edit page for updating title, salary, department
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="pageTitle">Edit Employee</ui:define>
+
+    <ui:define name="content">
+        <h1>Edit Employee</h1>
+
+        <!-- Success / error messages -->
+        <h:messages styleClass="msg-info" errorClass="msg-error"
+                    infoClass="msg-info" showDetail="true" globalOnly="true"/>
+
+        <h:form id="editForm" rendered="#{employeeEditBean.employee != null}">
+
+            <div class="form-card">
+
+                <!-- Read-only: Employee name and ID -->
+                <div class="form-group">
+                    <label>Employee</label>
+                    <h:outputText value="#{employeeEditBean.employee.fullName}"
+                                  style="font-weight:600; font-size:16px;"/>
+                    <br/>
+                    <h:outputText value="ID: #{employeeEditBean.employee.empId}"
+                                  style="font-size:12px; color:#888;"/>
+                </div>
+
+                <!-- Title — required, not blank -->
+                <div class="form-group">
+                    <label for="title">Title <span style="color:red">*</span></label>
+                    <h:inputText id="title"
+                                 value="#{employeeEditBean.employee.title}"
+                                 required="true"
+                                 requiredMessage="Title is required."
+                                 validatorMessage="Title cannot be blank.">
+                        <f:validateLength minimum="1" maximum="100"/>
+                    </h:inputText>
+                    <h:message for="title" style="color:red; font-size:12px;"/>
+                </div>
+
+                <!-- Salary — required, >= 0 -->
+                <div class="form-group">
+                    <label for="salary">Salary <span style="color:red">*</span></label>
+                    <h:inputText id="salary"
+                                 value="#{employeeEditBean.employee.salary}"
+                                 required="true"
+                                 requiredMessage="Salary is required."
+                                 converterMessage="Salary must be a valid number.">
+                        <f:validateDoubleRange minimum="0"/>
+                    </h:inputText>
+                    <h:message for="salary" style="color:red; font-size:12px;"/>
+                </div>
+
+                <!-- Department reassignment (optional) -->
+                <div class="form-group">
+                    <label for="dept">Department</label>
+                    <h:selectOneMenu id="dept"
+                                     value="#{employeeEditBean.employee.department.deptId}">
+                        <f:selectItems value="#{employeeEditBean.departments}"
+                                       var="d"
+                                       itemValue="#{d.deptId}"
+                                       itemLabel="#{d.deptName}"/>
+                    </h:selectOneMenu>
+                    <h:message for="dept" style="color:red; font-size:12px;"/>
+                </div>
+
+                <!-- Hire date (read-only display) -->
+                <div class="form-group">
+                    <label>Hire Date (read-only)</label>
+                    <h:outputText value="#{employeeEditBean.employee.hireDate}"
+                                  style="color:#555;"/>
+                </div>
+
+                <!-- Actions -->
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <h:commandButton value="Save Changes"
+                                     action="#{employeeEditBean.save}"
+                                     styleClass="btn btn-success"/>
+                    <h:link outcome="/employees" styleClass="btn btn-secondary"
+                            value="Cancel"/>
+                </div>
+
+            </div>
+
+        </h:form>
+
+        <!-- Shown if no employee found -->
+        <h:panelGroup rendered="#{employeeEditBean.employee == null}">
+            <div class="msg-error">Employee not found. Please go back and select a valid employee.</div>
+            <h:link outcome="/employees" styleClass="btn btn-secondary"
+                    value="← Back to Employees" style="margin-top:12px;"/>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>
+</html>
